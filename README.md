@@ -14,6 +14,8 @@ $ cd
 $ terraform init 
 $ terraform plan
 $ terraform apply 
+
+$ ansible-vault encrypt secrets.yml
 ``````
 
 

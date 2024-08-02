@@ -1,0 +1,33 @@
+---
+- name: Deploy Socks Shop 
+  hosts: localhost 
+  connection: local
+  gather_facts: false 
+
+  tasks:
+    - name: Clone Socks Shop repository 
+      git: 
+        repo: "https://github.com/microservices-demo/microservices-demo"
+        dest: "./microservices-demo"
+        version: "master"
+
+    - name: Apply Kubernetes manifests 
+      k8s:
+        definition: "{{ lookup('file', item) }}"
+        state: present
+      loop:
+        - ./microservices-demo/deploy/kubernetes/manifests/sock-shop-ns.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/carts-db-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/carts-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/catalogue-db-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/catalogue-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/orders-db-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/orders-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/payment-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/queue-master-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/rabbitmq-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/shipping-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/user-db-dep.yaml
+        - ./microservices-demo/deploy/kubernetes/manifests/user-dep.yaml
+  

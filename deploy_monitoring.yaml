@@ -1,0 +1,70 @@
+---
+- name: Deploy Prometheus and Grafana
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Add Prometheus Helm repository
+      kubernetes.core.helm_repository:
+        name: prometheus-community
+        repo_url: https://prometheus-community.github.io/helm-charts
+      #  state: present
+
+    - name: Install Prometheus using Helm
+      kubernetes.core.helm:
+        name: prometheus
+        chart_ref: prometheus-community/prometheus
+        release_namespace: monitoring
+        create_namespace: true
+
+    - name: Add Grafana Helm repository
+      kubernetes.core.helm_repository:
+        name: grafana
+        repo_url: https://grafana.github.io/helm-charts
+      #  state: present
+
+    - name: Install Grafana using Helm
+      kubernetes.core.helm:
+        name: grafana
+        chart_ref: grafana/grafana
+        release_namespace: monitoring
+        create_namespace: true
+    #    values_files:
+    #      - ./monitoring/grafana-values.yaml
+
+    - name: Add Jetstack Helm repo
+      kubernetes.core.helm_repository:
+        name: jetstack
+        repo_url: https://charts.jetstack.io
+
+    - name: Install cert-manager using Helm
+      kubernetes.core.helm:
+        name: cert-manager
+        chart_ref: jetstack/cert-manager
+        release_namespace: cert-manager
+        create_namespace: true
+        set_values: 
+          - name: installCRDs
+            value: true 
+   #     values_files:
+   #      - ./monitoring/cert-manager-values.
+
+    - name: Apply ClusterIssuer for Let's Encrypt
+      k8s: 
+        definition:
+        apiVersion: cert-manager.io/v1
+        kind: ClusterIssuer
+        metadata:
+          name: letsencrypt-prod
+        spec:
+          acme:
+            server: https://acme-v02.api.letsencrypt.org/directory
+            email: your-email@example.com
+            privateKeySecretRef:
+              name: letsencrypt-prod
+            solvers:
+            - http01:
+              ingress:
+                class: nginx
+
