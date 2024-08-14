@@ -10,7 +10,7 @@ resource "aws_eks_cluster" "main" {
 }
 
 resource "aws_iam_role" "eks_cluster" {
-    name = "eks_cluster-role"
+    name = "eksClusterRole"
 
     assume_role_policy = jsonencode({
         Version = "2012-10-17"
@@ -27,7 +27,7 @@ resource "aws_iam_role" "eks_cluster" {
 }
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
-    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
     role       = aws_iam_role.eks_nodes.name
 }
 

@@ -2,8 +2,8 @@ provider "aws" {
     region = "us-west-2"
 }
 
-resource "aws-rpc" "main" {
-    cidr_block = "10.0.0.0/16"
+resource "aws_vpc" "main" {
+    cidr_block           = "10.0.0.0/16"
     enable_dns_hostnames = true
 
     tags = {
@@ -19,7 +19,7 @@ resource "aws_internet_gateway" "main" {
     }
 }
 
-resource "aws-subnet" "public" {
+resource "aws_subnet" "public" {
     count = 2
     vpc_id = aws_vpc.main.id
     cidr_block = "10.0.${count.index}.0/24"
