@@ -1,7 +1,7 @@
 resource "aws_security_group" "eks_cluster" {
-    name = "eks_cluster-sg"
+    name        = "eks_cluster-sg"
     description = "Security group for EKS cluster"
-    vpc_id = aws_vpc.main.id
+    vpc_id      = aws_vpc.main.id
 
     ingress {
         from_port   = 443
@@ -11,9 +11,9 @@ resource "aws_security_group" "eks_cluster" {
     }
 
     egress {
-        from_port = 0
-        to_port = 0
-        protocol = "-1"
+        from_port   = 0
+        to_port     = 0
+        protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
 
