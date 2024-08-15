@@ -10,10 +10,31 @@ $ cd
 
 ## Run/ Test Project 
 
+### Terraform
+This project uses a `terraform.tfvars` file to manage aws environment variables. 
+
+- To setup copy `example.terraform.tfvars` to a new file `terraform.tfvars` then replace with your actual AWS credentials and other configurations. 
+
 ``````
+$ cp example.terraform.tfvars terraform.tfvars
+// then update the file with your own credentials
+
+`````` 
+
+- Ensure `terraform.tfvars` is added into the `.gitignore` to prevent committing sensitive information.
+
+``````
+$ source .env
+// Get-Content .env | ForEach-Object { $var = $_.Split('='); Set-Item "env:$($var[0])" $var[1] }
+
 $ terraform init 
-$ terraform plan
+$ terraform plan -var-file=terraform.tfvars
 $ terraform apply 
+$ terraform destroy
+``````
+
+- [Cluster Endpoint](https://D84029D5729C47C9238420156FE69C53.gr7.us-east-1.eks.amazonaws.com)
+``````
 
 $ ansible-vault encrypt secrets.yml
 // to deploy the Socks Shop to Cluster 

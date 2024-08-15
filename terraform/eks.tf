@@ -17,17 +17,7 @@ resource "aws_iam_role" "eks_cluster" {
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node_policy" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
-    role       = aws_iam_role.eks_nodes.name
-}
-
-resource "aws_iam_role_policy_attachment" "eks_cni_policy" {
-    policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
-    role       = "aws_iam_role.eks_nodes.name"
-}
-
-resource "aws_iam_role_policy_attachment" "eks_container_registry" {
-    policy_arn = "arn:aws:iam::aws:policy/AWSEC2ContainerRegistryReadOnly"
-    role       = aws_iam_role.eks_nodes.name
+    role       = aws_iam_role.eks_cluster.name
 }
 
 module "eks" {
@@ -35,16 +25,17 @@ module "eks" {
     version = "~> 18.0"
 
     cluster_name    = var.cluster_name
-    cluster_version = "1.24"
+    cluster_version = "1.27"
 
-    vpc_id     = aws_vpc.main.id
-    subnet_ids = aws_subnet.public[*].id
+    vpc_id                         = aws_vpc.main.id
+    subnet_ids                     = aws_subnet.public[*].id
+    cluster_endpoint_public_access = true
 
-    cluster_security_group_id = aws_security_group.eks_cluster.id
-    cluster_iam_role_name = aws_iam_role.eks_cluster.name
+    create_iam_role = false 
+    iam_role_arn    = aws_iam_role.eks_cluster.arn
 
-    eks_managed_node_groups_defaults = {
-        ami_type = "AL2_x86_64"
+    eks_managed_node_group_defaults = {
+        ami_type       = "AL2_x86_64"
         instance_types = ["t3.medium"]
     }
 
@@ -61,6 +52,8 @@ module "eks" {
             ]
         }
     }
+
+    cluster_security_group_id = aws_security_group.eks_cluster.id
 
     tags = {
         Environment = "production"
