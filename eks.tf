@@ -1,9 +1,9 @@
 resource "aws_eks_cluster" "main" {
     name = "socks-shop-cluster"
-    role_arn = aws_iam_role.eks_cluster.role_arn
 
     vps_config {
         subnet_ids = aws_subnet.public[*].id
+        role_arn = aws_iam_role.eks_cluster.arn
     }
 
     depends_on = [aws_iam_role_policy_attachment.eks_cluster_policy]

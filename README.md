@@ -16,6 +16,8 @@ $ terraform plan
 $ terraform apply 
 
 $ ansible-vault encrypt secrets.yml
+// to deploy the Socks Shop to Cluster 
+$ kubectl apply -f socks-shop-deployment.yaml
 ``````
 
 
