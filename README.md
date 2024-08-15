@@ -34,8 +34,18 @@ $ terraform destroy
 ``````
 
 - [Cluster Endpoint](https://D84029D5729C47C9238420156FE69C53.gr7.us-east-1.eks.amazonaws.com)
+
+### Kubernetes
+
+``````
+$ make deploy-infrastructure
+$ make deploy-socks-shop
+$ make deploy-monitoring
+$ make all
+$ make clean
 ``````
 
+``````
 $ ansible-vault encrypt secrets.yml
 // to deploy the Socks Shop to Cluster 
 $ kubectl apply -f socks-shop-deployment.yaml
