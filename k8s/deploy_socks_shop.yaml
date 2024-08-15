@@ -12,8 +12,8 @@
         version: "master"
 
     - name: Apply Kubernetes manifests 
-      k8s:
-        definition: "{{ lookup('file', item) }}"
+      kubernetes.core.k8s:
+        definition: "{{ lookup('file', item) | from_yaml }}"
         state: present
       loop:
         - ./microservices-demo/deploy/kubernetes/manifests/sock-shop-ns.yaml

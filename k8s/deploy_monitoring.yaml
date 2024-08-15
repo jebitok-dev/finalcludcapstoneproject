@@ -51,7 +51,7 @@
    #      - ./monitoring/cert-manager-values.
 
     - name: Apply ClusterIssuer for Let's Encrypt
-      k8s: 
+      kubernetes.core.k8s: 
         definition:
         apiVersion: cert-manager.io/v1
         kind: ClusterIssuer
