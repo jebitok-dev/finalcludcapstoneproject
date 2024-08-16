@@ -3,31 +3,50 @@
   hosts: localhost 
   connection: local
   gather_facts: false 
-
+  vars:
+    repo_path: "{{ playbook_dir }}/microservices-demo"
   tasks:
+    - name: Ensure microservices-demo directory exists
+      file:
+        path: "{{ repo_path }}"
+        state: directory
+        
     - name: Clone Socks Shop repository 
       git: 
         repo: "https://github.com/microservices-demo/microservices-demo"
-        dest: "./microservices-demo"
+        dest: "{{ repo_path }}"
         version: "master"
 
     - name: Apply Kubernetes manifests 
-      kubernetes.core.k8s:
-        definition: "{{ lookup('file', item) | from_yaml }}"
+      k8s:
+        definition: "{{ lookup('file', item) | from_yaml"
         state: present
       loop:
-        - ./microservices-demo/deploy/kubernetes/manifests/sock-shop-ns.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/carts-db-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/carts-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/catalogue-db-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/catalogue-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/front-end-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/orders-db-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/orders-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/payment-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/queue-master-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/rabbitmq-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/shipping-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/user-db-dep.yaml
-        - ./microservices-demo/deploy/kubernetes/manifests/user-dep.yaml
-  
+        - "{{ repo_path }}/deploy/kubernetes/manifests/00-sock-shop-ns.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/01-carts-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/02-carts-svc.yml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/03-carts-db-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/04-carts-db-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/05-catalogue-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/06-catalogue-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/07-catalogue-db-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/08-catalogue-db-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/09-front-end-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/10-front-end-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/11-orders-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/12-orders-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/13-orders-db-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/14-orders-db-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/15-payment-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/16-payment-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/17-queue-master-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/18-queue-master-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/19-rabbitmq-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/20-rabbitmq-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/23-shipping-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/24-shipping-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/25-user-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/26-user-svc.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/27-user-db-dep.yaml"
+        - "{{ repo_path }}/deploy/kubernetes/manifests/28-user-db-svc.yaml"
+      ignore_errors: yes

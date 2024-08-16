@@ -1,6 +1,7 @@
-.PHONY: all check-aws-credentials deploy-infrastructure configure-ansible deploy-socks-shop deploy-monitoring clean
+.PHONY: all deploy-all check-aws-credentials deploy-infrastructure configure-ansible deploy-socks-shop deploy-monitoring clean
 
 all: check-aws-credentials deploy-infrastructure configure-ansible deploy-socks-shop deploy-monitoring 
+deploy-all: deploy_socks_shop deploy_monitoring
 
 check-aws-credentials: 
 	@echo "Checking for AWS credentials..."
@@ -84,12 +85,12 @@ configure-ansible: check-aws-credentials
 deploy_socks_shop: export AWS_ACCESS_KEY_ID:=$(AWS_ACCESS_KEY_ID)
 deploy_socks_shop: export AWS_SECRET_ACCESS_KEY:=$(AWS_SECRET_ACCESS_KEY)
 deploy-socks-shop: configure-ansible 
-	ansible-playbook k8s/deploy_socks_shop.yaml
+	ansible-playbook -vvv --connection=local k8s/deploy_socks_shop.yaml
 
 deploy_monitoring: export AWS_ACCESS_KEY_ID:=$(AWS_ACCESS_KEY_ID)
 deploy_monitoring: export AWS_SECRET_ACCESS_KEY:=$(AWS_SECRET_ACCESS_KEY)
 deploy-monitoring: configure-ansible
-	ansible-playbook k8s/deploy_monitoring.yaml
+	ansible-playbook -vvv k8s/deploy_monitoring.yaml
 
 clean:
 	cd terraform && terraform destroy -auto-approve
