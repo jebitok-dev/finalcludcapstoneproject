@@ -90,3 +90,4 @@ TODO.md
 secrets.yml
 **/secrets/*
 **/credentials/*
+ansible_vars.yaml
