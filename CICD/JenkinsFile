@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    environment {
+        // Load environment variables from .env file
+        ENV_VARS = credentials('env-file-credentials')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Load Environment Variables') {
+            steps {
+                script {
+                    // Load environment variables from .env file
+                    load "$ENV_VARS"
+                    
+                    // Load variables from terraform.tfvars
+                    def tfvars = readFile('terraform/terraform.tfvars').trim()
+                    tfvars.split('\n').each { line ->
+                        def (key, value) = line.split('=').collect { it.trim() }
+                        if (key && value) {
+                            env[key.toUpperCase()] = value.replaceAll('"', '')
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Init and Plan') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
+
+        stage('Deploy to Staging') {
+            steps {
+                sh 'ansible-playbook -i localhost, k8s/deploy_socks_shop.yaml'
+                sh 'ansible-playbook -i localhost, k8s/deploy_monitoring.yaml'
+            }
+        }
+
+        stage('Security Scan') {
+            steps {
+                sh 'zap-cli quick-scan --self-contained --start-options "-config api.disablekey=true" $APP_URL'
+            }
+        }
+
+        stage('Performance Tests') {
+            steps {
+                sh 'jmeter -n -t performance-tests/load-test.jmx -l results.jtl'
+            }
+        }
+
+        stage('Deploy to Production') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'ansible-playbook -i localhost, k8s/deploy_socks_shop.yaml --extra-vars "env=production"'
+                sh 'ansible-playbook -i localhost, k8s/deploy_monitoring.yaml --extra-vars "env=production"'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/TEST-*.xml'
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        }
+    }
+}

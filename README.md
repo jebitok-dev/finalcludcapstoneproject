@@ -4,8 +4,8 @@
 ## SetUp Project Locally 
 
 `````
-$ git clone 
-$ cd 
+$ git clone https://github.com/jebitok-dev/finalcludcapstoneproject
+$ cd finalcludcapstoneproject
 `````
 
 ## Run/ Test Project 
@@ -16,7 +16,15 @@ This project uses a `terraform.tfvars` file to manage aws environment variables.
 - To setup copy `example.terraform.tfvars` to a new file `terraform.tfvars` then replace with your actual AWS credentials and other configurations. 
 
 ``````
-$ cp example.terraform.tfvars terraform.tfvars
+$ touch terraform.tfvars
+
+
+region         = ""
+aws_access_key = ""
+aws_secret_key = ""
+vpc_cidr       = "10.0.0.0/16"
+email          = ""
+
 // then update the file with your own credentials
 
 `````` 
